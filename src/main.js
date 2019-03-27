@@ -12,12 +12,14 @@ $(document).ready(function() {
   let pageNumber = 1;
   let stolenness = "proximity";
   let previousSearchLength = 0;
+  let weeksToSearch = 1;
 
   $('#search-form').submit(function(event) {
     event.preventDefault();
     perPage = $("#perPage").val();
     location = $("#location").val();
     distance = $('#distance').val();
+    weeksToSearch = $('#weeksToSearch').val();
     pageNumber = 1;
     stolenness = "proximity";
     if (location === ""){
@@ -46,9 +48,10 @@ $(document).ready(function() {
     // $("#tableHeader").show();
     // $("#resultTable").empty();
     // $(".showErrors").empty();
-    console.log("before:" + previousSearchLength);
-    getResults(pageNumber, perPage, location, distance, stolenness, bikeInfo, updatePrevSearchShowColumns, showError);
-    console.log("after:" + previousSearchLength);
+    //console.log(new Date());
+    let secondsToSearch = Math.floor((new Date())/1000 - weeksToSearch * 604800);
+    console.log("seconds to search " + secondsToSearch);
+    getResults(pageNumber, perPage, location, distance, stolenness, secondsToSearch, bikeInfo, updatePrevSearchLength, clearPrev, showError);
   }
   // function getResults(){
   //   $.get(`https://bikeindex.org:443/api/v3/search?page=${pageNumber}&per_page=${perPage}&location=${location}&distance=${distance}&stolenness=${stolenness}`).then(function(response){
@@ -64,14 +67,18 @@ $(document).ready(function() {
   //   });
   // }
 
-  let updatePrevSearchShowColumns = function(prevLength){
+  let updatePrevSearchLength = function(prevLength){
     previousSearchLength = prevLength;
+  }
+
+  let clearPrev = function(){
     $("#tableHeader").show();
     $("#resultTable").empty();
     $(".showErrors").empty();
   }
 
   let bikeInfo = function(bike){
+    console.log("info");
     let bikeString = "";
     bikeString += '<div class="row">';
     bikeString += `<div class="col-md-2"><p>${bike.title}</p></div>`;
